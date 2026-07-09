@@ -1,3 +1,4 @@
+use-privileged-ping: true
 web:
   port: 8081
 storage:
