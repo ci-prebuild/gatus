@@ -1,0 +1,20 @@
+[Unit]
+Description=Gatus
+Documentation=https://github.com/TwiN/gatus
+After=network.target network-online.target
+Requires=network-online.target
+
+[Service]
+Type=notify
+User=gatus
+Group=gatus
+Environment=GATUS_CONFIG_PATH=/etc/gatus/gatus.yaml
+ExecStart=/usr/local/bin/gatus
+TimeoutStopSec=5s
+LimitNOFILE=1048576
+PrivateTmp=true
+ProtectSystem=full
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+
+[Install]
+WantedBy=multi-user.target

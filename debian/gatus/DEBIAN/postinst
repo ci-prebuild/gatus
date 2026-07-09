@@ -1,0 +1,3 @@
+adduser --group --system gatus
+mkdir -p /var/lib/gatus
+chown -R gatus: /var/lib/gatus

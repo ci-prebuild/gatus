@@ -1,0 +1,13 @@
+web:
+  port: 8081
+storage:
+  type: "sqlite"
+  path: "/var/lib/gatus/gatus.sqlite"
+  maximum-number-of-results: 1000
+endpoints:
+  - name: localhost
+    url: "icmp://127.0.0.1"
+    group: pings
+    interval: 10s
+    conditions:
+      - "[CONNECTED] == true"

@@ -1,6 +1,7 @@
 name: Release
 
 env:
+  PKG_VERSION: "2025.07.09-1"
   # TODO: actions/checkout only supports GITHUB repos...
   GATUS_REPO: "selfhoster1312/gatus"
   GATUS_REF: "fork"
@@ -39,15 +40,45 @@ jobs:
         with:
           repository: "${{ env.GATUS_REPO }}"
           ref: "${{ env.GATUS_REF }}"
+      - name: Checkout sources for packaging
+        uses: actions/checkout@v7
+        with:
+          path: "__CI_PREBUILD__"
       - uses: actions/setup-go@v6
         with:
           go-version: 1.26.3
-      - name: Prepare dist folder
-        run: mkdir -p dist
+      - name: Prepare dist folder and debian bin folder
+        run: |
+          mkdir -p dist
+          mkdir -p __CI_PREBUILD__/debian/gatus/usr/local/bin/
       - name: Build binary for amd64
-        run: go build -o  dist/gatus-amd64
+        run: |
+          go build -o  dist/gatus-amd64
+          cp dist/gatus-amd64 __CI_PREBUILD__/debian/gatus/usr/local/bin/gatus
+      - name: Build deb for amd64
+        uses: jiro4989/build-deb-action@86e86ceb88b13157fa569663d43c89346505fc3e
+        with:
+          package: gatus
+          package_root: __CI_PREBUILD__/debian/gatus
+          maintainer: selfhoster1312
+          version: ${{ env.PKG_VERSION }}
+          arch: amd64
+        id: build-deb-amd64
+
       - name: Build binary for arm64
-        run: GOARCH="arm64" go build -o  dist/gatus-arm64
+        run: |
+          GOARCH="arm64" go build -o  dist/gatus-arm64
+          cp dist/gatus-arm64 __CI_PREBUILD__/debian/gatus/usr/local/bin/gatus
+      - name: Build deb for arm64
+        uses: jiro4989/build-deb-action@86e86ceb88b13157fa569663d43c89346505fc3e
+        with:
+          package: gatus
+          package_root: __CI_PREBUILD__/debian/gatus
+          maintainer: selfhoster1312
+          version: ${{ env.PKG_VERSION }}
+          arch: arm64
+        id: build-deb-arm64
+      
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@29e53e917877a24fad85510ded594ab3c9ca12de # 2.11.5
         if: env.preview == 'false'
@@ -57,13 +88,35 @@ jobs:
           file_glob: true
           tag: ${{ github.ref_name }}
           overwrite: true
-
+      - name: Upload amd64 deb to release
+        uses: svenstaro/upload-release-action@29e53e917877a24fad85510ded594ab3c9ca12de # 2.11.5
+        if: env.preview == 'false'
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ steps.build-deb-amd64.outputs.file_name }}
+          tag: ${{ github.ref_name }}
+          overwrite: true
+      - name: Upload arm64 deb to release
+        uses: svenstaro/upload-release-action@29e53e917877a24fad85510ded594ab3c9ca12de # 2.11.5
+        if: env.preview == 'false'
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ steps.build-deb-arm64.outputs.file_name }}
+          tag: ${{ github.ref_name }}
+          overwrite: true
+      
       - name: Upload gatus-amd64 as artifact
         uses: actions/upload-artifact@v7
         if: env.preview == 'true'
         with:
           name: gatus-amd64
           path: dist/gatus-amd64
+          archive: false
+      - name: Upload gatus-amd64 deb as artifact
+        uses: actions/upload-artifact@v7
+        if: env.preview == 'true'
+        with:
+          path: ${{ steps.build-deb-amd64.outputs.file_name }}
           archive: false
 
       - name: Upload gatus-arm64 as artifact
@@ -72,4 +125,10 @@ jobs:
         with:
           name: gatus-arm64
           path: dist/gatus-arm64
+          archive: false
+      - name: Upload gatus-arm64 deb as artifact
+        uses: actions/upload-artifact@v7
+        if: env.preview == 'true'
+        with:
+          path: ${{ steps.build-deb-arm64.outputs.file_name }}
           archive: false
