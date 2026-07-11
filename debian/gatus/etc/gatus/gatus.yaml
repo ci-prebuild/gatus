@@ -1,6 +1,6 @@
 use-privileged-ping: true
 web:
-  port: 8081
+  socket: /var/run/gatus/gatus.sock
 storage:
   type: "sqlite"
   path: "/var/lib/gatus/gatus.sqlite"

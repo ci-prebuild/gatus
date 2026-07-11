@@ -1,3 +1,6 @@
 adduser --group --system gatus
 mkdir -p /var/lib/gatus
 chown -R gatus: /var/lib/gatus
+mkdir -p /var/run/gatus
+chown -R gatus: /var/run/gatus
+systemctl daemon-reload
