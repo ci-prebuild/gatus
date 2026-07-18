@@ -1,7 +1,7 @@
 name: Release
 
 env:
-  PKG_VERSION: "2026.07.13"
+  PKG_VERSION: "2026.07.18"
   # TODO: actions/checkout only supports GITHUB repos...
   GATUS_REPO: "selfhoster1312/gatus"
   GATUS_REF: "36ac5ff8e85c71687f0e1a85879807fd31ffa6be"
