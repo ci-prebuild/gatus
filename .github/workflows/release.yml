@@ -4,7 +4,7 @@ env:
   PKG_VERSION: "2026.07.13"
   # TODO: actions/checkout only supports GITHUB repos...
   GATUS_REPO: "selfhoster1312/gatus"
-  GATUS_REF: "db022588a9923611c3b292ce1ba437753bd3bfe8"
+  GATUS_REF: "36ac5ff8e85c71687f0e1a85879807fd31ffa6be"
   # Preview mode: Publishes the build output as a CI artifact instead of creating
   # a release, allowing for manual inspection of the output. This mode is
   # activated if the CI run was triggered by events other than pushed tags, or
