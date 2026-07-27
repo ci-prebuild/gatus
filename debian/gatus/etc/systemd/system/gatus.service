@@ -8,6 +8,8 @@ Requires=network-online.target
 Type=exec
 User=gatus
 Group=gatus
+RuntimeDirectory="gatus"
+RuntimeDirectoryMode=0770
 Environment=GATUS_CONFIG_PATH=/etc/gatus/gatus.yaml
 ExecStart=/usr/local/bin/gatus
 TimeoutStopSec=5s
